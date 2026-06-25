@@ -1,0 +1,37 @@
+CREATE DATABASE IF NOT EXISTS university_erp;
+USE university_erp;
+CREATE TABLE users(
+user_id INT AUTO_INCREMENT PRIMARY KEY,
+name VARCHAR(100)NOT NULL,
+email VARCHAR(100)UNIQUE NOT NULL,
+password VARCHAR(255)NOT NULL,
+role VARCHAR(20)NOT NULL
+);
+
+CREATE TABLE courses(
+course_id INT AUTO_INCREMENT PRIMARY KEY,
+course_code VARCHAR(10)UNIQUE NOT NULL,
+course_name VARCHAR(100)NOT NULL,
+credits INT NOT NULL
+);
+
+
+CREATE TABLE course_registrations(
+registration_id INT AUTO_INCREMENT PRIMARY KEY,
+student_id INT NOT NULL,
+course_id INT NOT NULL,
+registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+FOREIGN KEY (student_id) REFERENCES users(user_id)ON DELETE CASCADE,
+FOREIGN KEY(course_id)REFERENCES courses(course_id)ON DELETE CASCADE
+);
+
+CREATE TABLE examinations(
+exam_id INT AUTO_INCREMENT PRIMARY KEY,
+student_id INT NOT NULL,
+course_id INT NOT NULL,
+marks INT DEFAULT NULL,
+grade VARCHAR(2) DEFAULT NULL,
+is_eligible BOOLEAN DEFAULT TRUE,
+FOREIGN KEY (student_id)REFERENCES users(user_id)ON DELETE CASCADE,
+FOREIGN KEY(course_id)REFERENCES courses(course_id)ON DELETE CASCADE
+);
