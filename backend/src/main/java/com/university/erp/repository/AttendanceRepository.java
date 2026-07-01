@@ -1,4 +1,13 @@
 package com.university.erp.repository;
 
-public interface AttendanceRepository {
+import com.university.erp.model.Attendance;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
+    List<Attendance> findByStudentRegNo(String studentRegNo);
+    List<Attendance> findByCourseCode(String courseCode);
 }
