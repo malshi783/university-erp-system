@@ -1,0 +1,138 @@
+/* ==========================================================================
+   UNIVERSITY ERP MANAGEMENT SYSTEM - GLOBAL STYLESHEET
+   ========================================================================== */
+
+/* --- 1. Global Variables & Theme Colors --- */
+:root {
+    --primary-color: #1e3a8a;    /* Deep Professional Navy Blue */
+    --secondary-color: #10b981;  /* Vibrant Accent Green */
+    --dark-bg: #0f172a;         /* Dark Slate for Sidebar/Headers */
+    --light-bg: #f8fafc;        /* Soft White/Grey for App Background */
+    --text-main: #334155;       /* Charcoal for readable body text */
+    --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --transition-smooth: all 0.3s ease;
+}
+
+/* --- 2. Base Page Layout Reset --- */
+body {
+    background-color: var(--light-bg);
+    color: var(--text-main);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* --- 3. Custom Card Styling (Gives a modern SaaS dashboard look) --- */
+.card {
+    background: #ffffff;
+    border: none;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    transition: var(--transition-smooth);
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.card-header {
+    background-color: transparent;
+    border-bottom: 1px solid #e2e8f0;
+    font-weight: 600;
+}
+
+/* --- 4. Custom Button Enhancements --- */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 0.5rem 1.25rem;
+    transition: var(--transition-smooth);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #1d4ed8;
+    border-color: #1d4ed8;
+}
+
+.btn-success {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+/* --- 5. Form Input Enhancements --- */
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    padding: 0.6rem 0.75rem;
+    transition: var(--transition-smooth);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.15);
+}
+
+/* --- 6. Table Styling (For view directories) --- */
+.table {
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+}
+
+.table thead {
+    background-color: var(--dark-bg);
+    color: #ffffff;
+}
+
+.table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    padding: 1rem;
+}
+
+.table td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+/* --- 7. Attendance Checkbox Custom Design --- */
+.attendance-check {
+    width: 1.5rem;
+    height: 1.5rem;
+    cursor: pointer;
+    border-color: #cbd5e1;
+}
+
+.attendance-check:checked {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+/* --- 8. Navigation & Sidebar Layout Helpers --- */
+.erp-sidebar {
+    background-color: var(--dark-bg);
+    color: #ffffff;
+    min-height: 100vh;
+}
+
+.erp-sidebar .nav-link {
+    color: #94a3b8;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    margin: 0.2rem 0.75rem;
+    transition: var(--transition-smooth);
+}
+
+.erp-sidebar .nav-link:hover, .erp-sidebar .nav-link.active {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.1);
+}
