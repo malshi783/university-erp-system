@@ -1,4 +1,4 @@
 package com.university.erp.repository;
 
-public class AttendenceRepository {
+public interface AttendanceRepository {
 }
