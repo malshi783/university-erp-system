@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University ERP - Central Command Dashboard</title>
+    <!-- 1. Bootstrap 5 Core CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 2. FontAwesome Icons for Enterprise SaaS Styling -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- 3. Chart.js CDN for Rendering the Attendance Analytics Widget -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- 4. Global Unified Theme Stylesheet Override -->
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- 🏗️ THE CORE FLEXBOX FRAME: Splits the layout into Left Sidebar & Right Workspace -->
+<div class="container-fluid/0 p-0 d-flex">
+
+    <!-- 🏢 LEFT SIDEBAR NAVIGATION (Maintained perfectly for design uniformity) -->
+    <div class="erp-sidebar d-flex flex-column p-3 text-white style-sidebar" style="width: 260px; min-height: 100vh;">
+        <div class="d-flex align-items-center mb-4 me-md-auto text-decoration-none text-white px-2">
+            <i class="fa-solid fa-graduation-cap fa-2x me-2 text-success"></i>
+            <span class="fs-4 fw-bold">Campus<span class="text-success">ERP</span></span>
+        </div>
+        <hr class="border-secondary">
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <a href="dashboard.html" class="nav-link active"><i class="fa-solid fa-chart-pie me-2"></i> Dashboard</a>
+            </li>
+            <li>
+                <a href="students.html" class="nav-link text-white-50"><i class="fa-solid fa-user-graduate me-2"></i> Students</a>
+            </li>
+            <li>
+                <a href="courses.html" class="nav-link text-white-50"><i class="fa-solid fa-book-bookmark me-2"></i> Courses</a>
+            </li>
+            <li>
+                <a href="exams.html" class="nav-link text-white-50"><i class="fa-solid fa-file-signature me-2"></i> Examinations</a>
+            </li>
+            <li>
+                <a href="attendance.html" class="nav-link text-white-50"><i class="fa-solid fa-calendar-check me-2"></i> Attendance</a>
+            </li>
+        </ul>
+        <hr class="border-secondary">
+        <div class="px-2 text-white-50 fs-7">Logged in as: <strong>Admin Panel</strong></div>
+    </div>
+
+    <!-- 📊 MAIN WORKSPACE CONTENT AREA -->
+    <div class="flex-grow-1 p-4 p-md-5" style="background-color: #f8fafc; overflow-y: auto; max-height: 100vh;">
+
+        <!-- ✉️ HERO WELCOME BANNER (Matches the elegant banner structure from the screen mockup) -->
+        <div class="card border-0 mb-4 text-white" style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); border-radius: 12px;">
+            <div class="card-body p-4 p-md-5">
+                <div class="row align-items-center">
+                    <div class="col-12 col-md-8">
+                        <h1 class="display-6 fw-bold mb-2">Welcome Back, Malshi Dewmini!</h1>
+                        <p class="lead opacity-75 mb-0">System operational parameters are nominal. You have active rosters awaiting verification today.</p>
+                    </div>
+                    <div class="col-12 col-md-4 text-md-end mt-3 mt-md-0 opacity-25 d-none d-md-block">
+                        <i class="fa-solid fa-shield-halved fa-6x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🧱 ROW 1: THE TOP METRIC CARDS GRID (12 columns split into 4 elements = col-md-3) -->
+        <div class="row g-4 mb-4">
+            <!-- Card 1: Total Students -->
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="card border-0 p-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-muted fw-semibold mb-1">Total Students</h6>
+                            <h3 class="fw-bold text-dark mb-0" id="totalStudentsCount">1,240</h3>
+                        </div>
+                        <div class="bg-primary-subtle p-3 rounded-3 text-primary"><i class="fa-solid fa-user-graduate fa-xl"></i></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 2: Total Teachers -->
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="card border-0 p-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-muted fw-semibold mb-1">Total Lecturers</h6>
+                            <h3 class="fw-bold text-dark mb-0" id="totalLecturersCount">48</h3>
+                        </div>
+                        <div class="bg-success-subtle p-3 rounded-3 text-success"><i class="fa-solid fa-chalkboard-user fa-xl"></i></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 3: Total Programs -->
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="card border-0 p-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-muted fw-semibold mb-1">Active Courses</h6>
+                            <h3 class="fw-bold text-dark mb-0" id="totalCoursesCount">18</h3>
+                        </div>
+                        <div class="bg-warning-subtle p-3 rounded-3 text-warning"><i class="fa-solid fa-book-open fa-xl"></i></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Card 4: Upcoming Exams -->
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="card border-0 p-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-muted fw-semibold mb-1">Scheduled Exams</h6>
+                            <h3 class="fw-bold text-dark mb-0" id="totalExamsCount">6</h3>
+                        </div>
+                        <div class="bg-danger-subtle p-3 rounded-3 text-danger"><i class="fa-solid fa-file-signature fa-xl"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 📊 ROW 2: THE DYNAMIC CORE INTERFACES (Split into Chart Widget and Action Quicklinks) -->
+        <div class="row g-4">
+
+            <!-- COLUMN A: Attendance Donut Chart Analytics (Takes up 5/12 of desktop width) -->
+            <div class="col-12 col-lg-5">
+                <div class="card border-0 p-4 h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold m-0 text-dark"><i class="fa-solid fa-chart-pie text-success me-2"></i>Daily Attendance Split</h5>
+                        <span class="badge bg-light text-muted border">Real-time</span>
+                    </div>
+                    <!-- Chart canvas context element wrapper -->
+                    <div class="mx-auto style-chart-wrapper" style="position: relative; width: 100%; max-width: 240px;">
+                        <canvas id="attendanceDonutChart"></canvas>
+                    </div>
+                    <div class="row mt-4 text-center g-2">
+                        <div class="col-6">
+                            <small class="text-muted d-block"><i class="fa-solid fa-circle text-success me-1"></i> Present Average</small>
+                            <span class="fw-bold fs-5">88.4%</span>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted d-block"><i class="fa-solid fa-circle text-danger me-1"></i> Absent Average</small>
+                            <span class="fw-bold fs-5">11.6%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUMN B: ERP Quick Action Hub Layout Grid (Takes up 7/12 of desktop width) -->
+            <div class="col-12 col-lg-7">
+                <div class="card border-0 p-4 h-100">
+                    <h5 class="fw-bold mb-4 text-dark"><i class="fa-solid fa-wand-magic-sparkles text-primary me-2"></i>Administrative Navigation Gateways</h5>
+
+                    <!-- 2x2 Inner Quicklinks Grid Blueprint -->
+                    <div class="row g-3">
+                        <div class="col-12 col-sm-6">
+                            <a href="students.html" class="btn btn-light border p-4 w-100 h-100 d-flex flex-column align-items-center text-center text-decoration-none">
+                                <div class="bg-primary-subtle text-primary p-3 rounded-circle mb-3"><i class="fa-solid fa-user-graduate fa-lg"></i></div>
+                                <span class="fw-bold text-dark d-block">Manage Students</span>
+                                <small class="text-muted">Register and view profiles</small>
+                            </a>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <a href="courses.html" class="btn btn-light border p-4 w-100 h-100 d-flex flex-column align-items-center text-center text-decoration-none">
+                                <div class="bg-success-subtle text-success p-3 rounded-circle mb-3"><i class="fa-solid fa-book-bookmark fa-lg"></i></div>
+                                <span class="fw-bold text-dark d-block">Course Directory</span>
+                                <small class="text-muted">Configure faculty syllabi</small>
+                            </a>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <a href="exams.html" class="btn btn-light border p-4 w-100 h-100 d-flex flex-column align-items-center text-center text-decoration-none">
+                                <div class="bg-danger-subtle text-danger p-3 rounded-circle mb-3"><i class="fa-solid fa-clock-history fa-lg"></i></div>
+                                <span class="fw-bold text-dark d-block">Examination Schedules</span>
+                                <small class="text-muted">Assign seating tables & logs</small>
+                            </a>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <a href="attendance.html" class="btn btn-light border p-4 w-100 h-100 d-flex flex-column align-items-center text-center text-decoration-none">
+                                <div class="bg-info-subtle text-info p-3 rounded-circle mb-3"><i class="fa-solid fa-calendar-check fa-lg"></i></div>
+                                <span class="fw-bold text-dark d-block">Track Attendance</span>
+                                <small class="text-muted">Verify daily program attendance</small>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<!-- 📊 JAVASCRIPT: Engine Routine to Initialize the Elegant Donut Analytics Display Chart Widget -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const ctx = document.getElementById('attendanceDonutChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Present', 'Absent'],
+                datasets: [{
+                    data: [88, 12], // Dummy baseline arrays matching mockup look metrics
+                    backgroundColor: ['#10b981', '#ef4444'], // Secondary (green) and Danger (red) variables from global sheet
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { display: false } // Hidden to keep card text presentation minimal and ultra clean
+                },
+                cutout: '75%' // Thins out the donut core matching modern interface design specifications
+            }
+        });
+    });
+    <script src="Dashboard.js"></script>
+</script>
+
+</body>
+</html>
