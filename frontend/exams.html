@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Management System - Dashboard</title>
+    <!-- Google Fonts & FontAwesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- INTERNAL CSS STYLING (Matching WhatsApp Image 2026-07-01 at 22.36.34.jpeg) --- */
+        :root {
+            --bg-body: #f4f7fc;
+            --sidebar-width: 260px;
+            --primary-blue: #0061ff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- SIDEBAR STYLING --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: #ffffff;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .sidebar-brand {
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-brand i {
+            color: var(--primary-blue);
+            font-size: 24px;
+        }
+
+        .sidebar-brand h2 {
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .sidebar-menu {
+            padding: 20px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .menu-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin: 14px 0 6px 10px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .menu-item i {
+            font-size: 16px;
+            color: var(--text-muted);
+            width: 20px;
+        }
+
+        .menu-item:hover {
+            background-color: #f1f5f9;
+        }
+
+        .menu-item.active {
+            background-color: #edf5ff;
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        .menu-item.active i {
+            color: var(--primary-blue);
+        }
+
+        .menu-item.logout {
+            color: #ef4444;
+            margin-top: 20px;
+        }
+        .menu-item.logout i { color: #ef4444; }
+
+        /* --- MAIN LAYOUT WINDOW --- */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        /* --- TOP HEADER BAR --- */
+        .top-navbar {
+            background-color: #ffffff;
+            height: 70px;
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-left h1 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .search-container {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 8px 16px 8px 36px;
+            background-color: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .notification-bell {
+            position: relative;
+            font-size: 18px;
+            color: var(--text-dark);
+            cursor: pointer;
+        }
+        /* --- DASHBOARD GRID ARCHITECTURE --- */
+        .workspace-area {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* 5-Column Stats Bar */
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+        }
+
+        .metric-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .metric-details p {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .metric-details h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .metric-trend {
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .trend-up { color: #10b981; }
+
+        .metric-icon-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        .metric-icon-box.blue { background-color: #edf5ff; color: #0061ff; }
+        .metric-icon-box.green { background-color: #ecfdf5; color: #10b981; }
+        .metric-icon-box.purple { background-color: #f5f3ff; color: #8b5cf6; }
+        .metric-icon-box.orange { background-color: #fff7ed; color: #f97316; }
+
+        /* Lower Grid System Split */
+        .dashboard-split-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .left-column-tables, .right-column-widgets {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* --- PANEL PANES AND DATA TABLES --- */
+        .panel-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            padding: 24px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .panel-header h3 {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .view-all-link {
+            font-size: 12px;
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .data-table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f8fafc;
+            padding: 12px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 14px 16px;
+            font-size: 13px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .semester-group-row td {
+            background-color: #edf5ff;
+            color: var(--primary-blue);
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .status-badge.pass { background-color: #e6f4ea; color: #137333; }
+
+        /* Mock Donut Chart Layout styling */
+        .mock-donut-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 10px 0;
+        }
+
+        .donut-graphic {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(#10b981 0% 35%, #0061ff 35% 65%);
+            position: relative;
+        }
+
+        .donut-graphic::before {
+            content: "";
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            background: #ffffff;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .chart-legends {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .legend-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .legend-color-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .color-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- --- SIDEBAR NAVIGATION --- -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <h2>Exam Management<br>System</h2>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="#" class="menu-item"><i class="fa-solid fa-file-signature"></i> Dashboard</a>
+             <a href="#" class="menu-item"><i class="fa-solid fa-file-signature"></i>Student</a>
+            <a href="#" class="menu-item"><i class="fa-solid fa-user-graduate"></i>Course</a>
+             <a href="#" class="menu-item"><i class="fa-solid fa-file-signature"></i>Exams</a>
+              <a href="#" class="menu-item"><i class="fa-solid fa-file-signature"></i>Attendance</a>
+            <a href="#" class="menu-item logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </aside>
+
+    <!-- --- MAIN WORKING AREA --- -->
+    <div class="main-content">
+        
+        <!-- TOP NAVBAR HEADER -->
+        <header class="top-navbar">
+            <div class="nav-left">
+                <i class="fa-solid fa-bars" style="cursor: pointer; color: var(--text-muted);"></i>
+                <h1>Exam Management</h1>
+            </div>
+        </header>
+
+        <!-- DASHBOARD BODY CONTAINER -->
+        <main class="workspace-area">
+            
+            <!-- 5-COLUMN TOP METRICS BAR -->
+            <section class="metrics-row">
+                <div class="metric-card">
+                    <div class="metric-details">
+                        <p>Total Exams</p>
+                        <h2>35</h2>
+                        <span class="metric-trend trend-up">+5 this month</span>
+                    </div>
+                    <div class="metric-icon-box blue"><i class="fa-regular fa-file-lines"></i></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-details">
+                        <p>Total Students</p>
+                        <h2>1,245</h2>
+                        <span class="metric-trend trend-up">+120 this month</span>
+                    </div>
+                    <div class="metric-icon-box green"><i class="fa-solid fa-users"></i></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-details">
+                        <p>Exams Conducted</p>
+                        <h2>18</h2>
+                        <span class="metric-trend trend-up">+6 this month</span>
+                    </div>
+                    <div class="metric-icon-box purple"><i class="fa-regular fa-circle-check"></i></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-details">
+                        <p>Average Score</p>
+                        <h2>76.5%</h2>
+                        <span class="metric-trend trend-up">+8.2% this month</span>
+                    </div>
+                    <div class="metric-icon-box orange"><i class="fa-solid fa-trophy"></i></div>
+                </div>
+            </section>
+
+            <!-- SPLIT SECTION: TABLES VS CONTROLS -->
+            <div class="dashboard-split-grid">
+                
+                <!-- LEFT PANEL TABLES COLUMN -->
+                <div class="left-column-tables">
+                    
+                    <!-- Table 1: Upcoming Exams -->
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <h3>Upcoming Exams</h3>
+                            <a href="#" class="view-all-link">View All</a>
+                        </div>
+                        <div class="data-table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Module</th>
+                                        <th>Class</th>
+                                        <th>Room</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><tr class="semester-group-row">
+                                    </tr>
+                                        <td style="color: var(--primary-blue); font-weight:600;">05 Auguest 2026</td>
+                                        <td>09:00 AM</td>
+                                        <td style="font-weight: 500;">Business Process and ERP</td>
+                                        <td>2nd Year 1st Sem</td>
+                                        <td>Room 301</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color: var(--primary-blue); font-weight:600;">03 Auguest 2026</td>
+                                        <td>11:00 AM</td>
+                                        <td style="font-weight: 500;">Introduction to Software Engineering</td>
+                                        <td>2nd Year 1st Sem</td>
+                                        <td>Room 302</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color: var(--primary-blue); font-weight:600;">10 Auguest 2026</td>
+                                        <td>02:00 PM</td>
+                                        <td style="font-weight: 500;">Human Computer Interaction</td>
+                                        <td>2nd Year 1st Sem</td>
+                                        <td>Room 303</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color: var(--primary-blue); font-weight:600;">07 Auguest 2026</td>
+                                        <td>02:00 PM</td>
+                                        <td style="font-weight: 500;">Algorithms and Complexity</td>
+                                        <td>2nd Year 1st Sem</td>
+                                        <td>Room 303</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color: var(--primary-blue); font-weight:600;">30 July 2026</td>
+                                        <td>02:00 PM</td>
+                                        <td style="font-weight: 500;">Software Architecture</td>
+                                        <td>2nd Year 1st Sem</td>
+                                        <td>Room 303</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Table 2: Recent Exams Organized By Semester Groups -->
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <h3>Recent Exams</h3>
+                        </div>
+                        <div class="data-table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Module</th>
+                                        <th>Obtained Marks</th>
+                                        <th>Grade</th>
+                                        <th>Result</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Semester Group Row -->
+                                    <tr class="semester-group-row">
+                                        <td colspan="7">1 Year 1st Sem</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 500;">Introduction to Computer Science</td>
+                                        <td>85</td>
+                                        <td style="font-weight:600;">A</td>
+                                        <td><span class="status-badge pass">Pass</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 500;">Programming Fundamental</td>
+                                        <td>78</td>
+                                        <td style="font-weight:600;">B+</td>
+                                        <td><span class="status-badge pass">Pass</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 500;">Academic Writing and computing</td>
+                                        <td>85</td>
+                                        <td style="font-weight:600;">A</td>
+                                        <td><span class="status-badge pass">Pass</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 500;">Introduction to Sustainability</td>
+                                        <td>85</td>
+                                        <td style="font-weight:600;">A</td>
+                                        <td><span class="status-badge pass">Pass</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 500;">Database Management System</td>
+                                        <td>85</td>
+                                        <td style="font-weight:600;">A</td>
+                                        <td><span class="status-badge pass">Pass</span></td>
+                                    </tr>
+                                    
+                                    <!-- Semester Group Row -->
+                                    <tr class="semester-group-row">
+                                        <td colspan="7">1 Year 2nd Sem</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 500;">Data Communication and Network</td>
+                                        <td>81</td>
+                                        <td style="font-weight:600;">A-</td>
+                                        <td><span class="status-badge pass">Pass</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 500;">Object Oriented Programming with Java</td>
+                                        <td>81</td>
+                                        <td style="font-weight:600;">A-</td>
+                                        <td><span class="status-badge pass">Pass</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 500;">Algorithms and Data Structures</td>
+                                        <td>81</td>
+                                        <td style="font-weight:600;">A-</td>
+                                        <td><span class="status-badge pass">Pass</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 500;">Web Application Development</td>
+                                        <td>81</td>
+                                        <td style="font-weight:600;">A-</td>
+                                        <td><span class="status-badge pass">Pass</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 500;">Computer Architecture</td>
+                                        <td>81</td>
+                                        <td style="font-weight:600;">A-</td>
+                                        <td><span class="status-badge pass">Pass</span></td>
+                                    </tr>
+
+                                    <tr class="semester-group-row">
+                                        <td colspan="7">2 Year 1st Sem</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 500;">Computer Network</td>
+                                        <td>85</td>
+                                        <td style="font-weight:600;">A</td>
+                                        <td><span class="status-badge pass">Pass</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 500;">Operating System</td>
+                                        <td>78</td>
+                                        <td style="font-weight:600;">B+</td>
+                                        <td><span class="status-badge pass">Pass</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 500;">Statistics for Computing</td>
+                                        <td>85</td>
+                                        <td style="font-weight:600;">A</td>
+                                        <td><span class="status-badge pass">Pass</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 500;">System Analysis and Design</td>
+                                        <td>85</td>
+                                        <td style="font-weight:600;">A</td>
+                                        <td><span class="status-badge pass">Pass</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 500;">Development of Enterprise Application 1</td>
+                                        <td>85</td>
+                                        <td style="font-weight:600;">A</td>
+                                        <td><span class="status-badge pass">Pass</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT PANEL WIDGETS COLUMN -->
+                <div class="right-column-widgets">
+
+                    <!-- Widget 2: Conic Distribution Render -->
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <h3>Grade Distribution</h3>
+                        </div>
+                        <div class="mock-donut-container">
+                            <div class="donut-graphic"></div>
+                            <div class="chart-legends">
+                                <div class="legend-item">
+                                    <div class="legend-color-label"><div class="color-dot" style="background:#10b981;"></div> A (3.50 - 4.00)</div>
+                                    <span>35%</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color-label"><div class="color-dot" style="background:#0061ff;"></div> B (2.50 - 3.49)</div>
+                                    <span>30%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
