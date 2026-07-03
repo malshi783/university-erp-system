@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Management — University ERP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    :root {
+      --primary: #1E3A5F;
+      --primary-hover: #16304D;
+      --accent: #2ECC71;
+      --accent-hover: #27AE60;
+      --bg: #F5F7FA;
+      --surface: #FFFFFF;
+      --border: #E5E9F0;
+      --text-primary: #1A2233;
+      --text-secondary: #6B7280;
+      --danger: #E5484D;
+      --warning: #F5A623;
+      --sidebar-width: 240px;
+      --header-height: 88px;
+      --radius-card: 12px;
+      --radius-btn: 8px;
+      --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-hover: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text-primary);
+      background: var(--bg);
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: var(--sidebar-width);
+      height: 100vh;
+      background: var(--primary);
+      z-index: 1040;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar-brand {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .sidebar-brand .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(46,204,113,0.15);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .sidebar-brand h1 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      margin: 0;
+      letter-spacing: -0.2px;
+    }
+
+    .sidebar-brand p {
+      font-size: 11px;
+      color: rgba(255,255,255,0.45);
+      margin: 2px 0 0;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 16px 12px;
+      overflow-y: auto;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: var(--radius-btn);
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      border-left: 3px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .sidebar-nav a i { font-size: 17px; width: 20px; text-align: center; }
+
+    .sidebar-nav a:hover {
+      color: #fff;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .sidebar-nav a.active {
+      color: #fff;
+      background: rgba(255,255,255,0.1);
+      border-left-color: var(--accent);
+    }
+
+    .sidebar-footer {
+      padding: 16px 12px 24px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .sidebar-footer a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: var(--radius-btn);
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .sidebar-footer a:hover { color: #fff; background: rgba(229,72,77,0.12); }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 1035;
+    }
+
+    /* ── Main layout ── */
+    .main-wrapper {
+      margin-left: var(--sidebar-width);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top-header {
+      position: sticky;
+      top: 0;
+      z-index: 1020;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 32px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .header-left { flex: 1; min-width: 0; }
+
+    .mobile-toggle {
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-btn);
+      width: 40px;
+      height: 40px;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+
+    .mobile-toggle:hover { background: var(--bg); }
+
+    .breadcrumb-nav {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .breadcrumb-nav a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .breadcrumb-nav a:hover { color: var(--primary); }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0 0 4px;
+      letter-spacing: -0.3px;
+    }
+
+    .page-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .main-content {
+      padding: 24px 32px 40px;
+      max-width: 1280px;
+      width: 100%;
+    }
+
+    /* ── Fade-in ── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(8px);
+      animation: fadeIn 0.3s ease forwards;
+    }
+
+    .fade-in:nth-child(1) { animation-delay: 0.05s; }
+    .fade-in:nth-child(2) { animation-delay: 0.1s; }
+    .fade-in:nth-child(3) { animation-delay: 0.15s; }
+    .fade-in:nth-child(4) { animation-delay: 0.2s; }
+
+    @keyframes fadeIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Stat cards ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 20px;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-left: 3px solid transparent;
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .stat-card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+
+    .stat-card.stat-navy { border-left-color: var(--primary); }
+    .stat-card.stat-green { border-left-color: var(--accent); }
+    .stat-card.stat-amber { border-left-color: var(--warning); }
+    .stat-card.stat-blue { border-left-color: #3B82F6; }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .stat-icon.navy { background: rgba(30,58,95,0.1); color: var(--primary); }
+    .stat-icon.green { background: rgba(46,204,113,0.12); color: var(--accent); }
+    .stat-icon.amber { background: rgba(245,166,35,0.12); color: var(--warning); }
+    .stat-icon.blue { background: rgba(59,130,246,0.12); color: #3B82F6; }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    /* ── Content cards ── */
+    .content-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card);
+      margin-bottom: 24px;
+      overflow: hidden;
+      transition: box-shadow 0.2s ease;
+    }
+
+    .content-card:hover { box-shadow: var(--shadow-hover); }
+
+    .card-header-custom {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-header-custom .header-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(30,58,95,0.08);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+    }
+
+    .card-header-custom h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    .count-badge {
+      background: rgba(30,58,95,0.08);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 20px;
+      margin-left: 4px;
+    }
+
+    .card-body-custom { padding: 24px; }
+
+    /* ── Avatar ── */
+    .avatar-circle {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .student-name-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* ── Form ── */
+    .form-label-custom {
+      font-size: 13px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .form-control-custom,
+    .form-select-custom {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-btn);
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-primary);
+      background: var(--surface);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-control-custom:focus,
+    .form-select-custom:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(30,58,95,0.12);
+    }
+
+    .form-control-custom.is-invalid,
+    .form-select-custom.is-invalid {
+      border-color: var(--danger);
+      box-shadow: 0 0 0 3px rgba(229,72,77,0.1);
+    }
+
+    .field-error {
+      display: none;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--danger);
+      margin-top: 5px;
+    }
+
+    .field-error.visible { display: flex; }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 8px;
+      padding-top: 8px;
+    }
+
+    .btn-primary-custom {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 10px 24px;
+      border-radius: var(--radius-btn);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+
+    .btn-primary-custom:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(46,204,113,0.3);
+    }
+
+    .btn-primary-custom:active { transform: translateY(0); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      padding: 10px 24px;
+      border-radius: var(--radius-btn);
+      font-size: 14px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+
+    .btn-ghost:hover {
+      background: var(--bg);
+      border-color: #CBD5E1;
+      color: var(--text-primary);
+    }
+
+    /* ── Toolbar ── */
+    .table-toolbar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .search-wrapper {
+      position: relative;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .search-wrapper i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      font-size: 14px;
+      pointer-events: none;
+    }
+
+    .search-wrapper input {
+      padding-left: 36px;
+    }
+
+    .filter-select { width: 180px; flex-shrink: 0; }
+
+    /* ── Table ── */
+    .table-container {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      overflow-x: auto;
+    }
+
+    .students-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .students-table thead th {
+      background: var(--bg);
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .students-table tbody td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-primary);
+      vertical-align: middle;
+    }
+
+    .students-table tbody tr:last-child td { border-bottom: none; }
+
+    .students-table tbody tr {
+      transition: background 0.15s ease;
+    }
+
+    .students-table tbody tr:hover { background: rgba(30,58,95,0.03); }
+
+    .faculty-chip {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .faculty-computing { background: rgba(59,130,246,0.1); color: #2563EB; }
+    .faculty-business { background: rgba(245,166,35,0.12); color: #D97706; }
+    .faculty-engineering { background: rgba(139,92,246,0.1); color: #7C3AED; }
+    .faculty-science { background: rgba(46,204,113,0.12); color: #16A34A; }
+    .faculty-humanities { background: rgba(236,72,153,0.1); color: #DB2777; }
+    .faculty-default { background: rgba(107,114,128,0.1); color: var(--text-secondary); }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-active {
+      background: rgba(46,204,113,0.12);
+      color: #16A34A;
+    }
+
+    .status-active::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .status-inactive {
+      background: rgba(107,114,128,0.12);
+      color: var(--text-secondary);
+    }
+
+    .status-inactive::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #9CA3AF;
+    }
+
+    .status-suspended {
+      background: rgba(229,72,77,0.12);
+      color: var(--danger);
+    }
+
+    .status-suspended::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--danger);
+    }
+
+    /* ── Empty state ── */
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text-secondary);
+    }
+
+    .empty-state i {
+      font-size: 40px;
+      color: #CBD5E1;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .empty-state h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 6px;
+    }
+
+    .empty-state p { margin: 0; font-size: 13px; }
+
+    /* ── Skeleton ── */
+    .skeleton-row td { padding: 14px 16px; }
+
+    .skeleton {
+      height: 14px;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #E5E9F0 25%, #F0F2F5 50%, #E5E9F0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+    }
+
+    .skeleton.w-30 { width: 30%; }
+    .skeleton.w-50 { width: 50%; }
+    .skeleton.w-70 { width: 70%; }
+    .skeleton.w-40 { width: 40%; }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ── Toast ── */
+    .toast-container {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast-msg {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 18px;
+      border-radius: var(--radius-btn);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      font-size: 14px;
+      font-weight: 500;
+      min-width: 280px;
+      transform: translateX(120%);
+      opacity: 0;
+      animation: toastIn 0.35s ease forwards;
+    }
+
+    .toast-msg.toast-out {
+      animation: toastOut 0.3s ease forwards;
+    }
+
+    .toast-msg.success { border-left: 3px solid var(--accent); }
+    .toast-msg.error { border-left: 3px solid var(--danger); }
+
+    .toast-msg i { font-size: 18px; }
+    .toast-msg.success i { color: var(--accent); }
+    .toast-msg.error i { color: var(--danger); }
+
+    @keyframes toastIn {
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes toastOut {
+      to { transform: translateX(120%); opacity: 0; }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 1199px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 991px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.open { transform: translateX(0); }
+
+      .sidebar-overlay.open { display: block; }
+
+      .main-wrapper { margin-left: 0; }
+
+      .mobile-toggle { display: flex; }
+
+      .top-header { padding: 16px 20px; }
+
+      .main-content { padding: 20px; }
+    }
+
+    @media (max-width: 575px) {
+      .stats-grid { grid-template-columns: 1fr; }
+
+      .filter-select { width: 100%; }
+
+      .form-actions { flex-direction: column-reverse; }
+
+      .form-actions button { width: 100%; justify-content: center; }
+
+      .btn-primary-custom { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><i class="bi bi-mortarboard-fill"></i></div>
+      <h1>UniERP</h1>
+      <p>Management System</p>
+    </div>
+    <nav class="sidebar-nav" aria-label="Main navigation">
+      <a href="index.html"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a>
+      <a href="students.html" class="active"><i class="bi bi-people-fill"></i> Students</a>
+      <a href="courses.html"><i class="bi bi-book-fill"></i> Courses</a>
+      <a href="#"><i class="bi bi-file-earmark-text-fill"></i> Exams</a>
+      <a href="attendance.html"><i class="bi bi-calendar-check-fill"></i> Attendance</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="#"><i class="bi bi-box-arrow-left"></i> Logout</a>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- Main -->
+  <div class="main-wrapper">
+    <header class="top-header">
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle navigation">
+        <i class="bi bi-list fs-5"></i>
+      </button>
+      <div class="header-left">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <a href="index.html">Dashboard</a> / Students
+        </nav>
+        <h1 class="page-title">Student Management</h1>
+        <p class="page-subtitle">Manage student records, enrollment, faculties, and status.</p>
+      </div>
+    </header>
+
+    <main class="main-content">
+
+      <!-- Stats -->
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card stat-navy fade-in">
+          <div class="stat-icon navy"><i class="bi bi-people-fill"></i></div>
+          <div>
+            <div class="stat-value" id="statTotalStudents">—</div>
+            <div class="stat-label">Total Students</div>
+          </div>
+        </div>
+        <div class="stat-card stat-green fade-in">
+          <div class="stat-icon green"><i class="bi bi-building"></i></div>
+          <div>
+            <div class="stat-value" id="statFaculties">—</div>
+            <div class="stat-label">Faculties</div>
+          </div>
+        </div>
+        <div class="stat-card stat-amber fade-in">
+          <div class="stat-icon amber"><i class="bi bi-person-check-fill"></i></div>
+          <div>
+            <div class="stat-value" id="statActiveStudents">—</div>
+            <div class="stat-label">Active Students</div>
+          </div>
+        </div>
+        <div class="stat-card stat-blue fade-in">
+          <div class="stat-icon blue"><i class="bi bi-mortarboard"></i></div>
+          <div>
+            <div class="stat-value" id="statYear">—</div>
+            <div class="stat-label">Most Common Year</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Student Form -->
+      <div class="content-card fade-in">
+        <div class="card-header-custom">
+          <div class="header-icon"><i class="bi bi-person-plus-fill"></i></div>
+          <h2>Add New Student</h2>
+        </div>
+        <div class="card-body-custom">
+          <form id="addStudentForm" novalidate>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label-custom" for="studentId">Student ID</label>
+                <input type="text" class="form-control-custom" id="studentId" placeholder="e.g. STU20260145" autocomplete="off">
+                <div class="field-error" id="errorStudentId"><i class="bi bi-exclamation-circle"></i><span></span></div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-custom" for="fullName">Full Name</label>
+                <input type="text" class="form-control-custom" id="fullName" placeholder="e.g. Nimasha Perera" autocomplete="off">
+                <div class="field-error" id="errorFullName"><i class="bi bi-exclamation-circle"></i><span></span></div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-custom" for="email">Email Address</label>
+                <input type="email" class="form-control-custom" id="email" placeholder="e.g. nimasha.p@uni.edu" autocomplete="off">
+                <div class="field-error" id="errorEmail"><i class="bi bi-exclamation-circle"></i><span></span></div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-custom" for="faculty">Faculty</label>
+                <select class="form-select-custom" id="faculty">
+                  <option value="" disabled selected>Select faculty</option>
+                  <option value="Computing">Computing</option>
+                  <option value="Business">Business</option>
+                  <option value="Engineering">Engineering</option>
+                  <option value="Science">Science</option>
+                  <option value="Humanities">Humanities</option>
+                </select>
+                <div class="field-error" id="errorFaculty"><i class="bi bi-exclamation-circle"></i><span></span></div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-custom" for="year">Year of Study</label>
+                <select class="form-select-custom" id="year">
+                  <option value="Year 1">Year 1</option>
+                  <option value="Year 2">Year 2</option>
+                  <option value="Year 3">Year 3</option>
+                  <option value="Year 4">Year 4</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-custom" for="phone">Phone Number <span style="text-transform:none;letter-spacing:0;font-weight:400;">(optional)</span></label>
+                <input type="text" class="form-control-custom" id="phone" placeholder="e.g. 077 123 4567" autocomplete="off">
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn-ghost" onclick="clearForm()">Clear Form</button>
+              <button type="submit" class="btn-primary-custom" id="saveBtn">
+                <i class="bi bi-check-lg"></i> Save Student
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Students Table -->
+      <div class="content-card fade-in">
+        <div class="card-header-custom">
+          <div class="header-icon"><i class="bi bi-table"></i></div>
+          <h2>Registered Students <span class="count-badge" id="studentCountBadge">0</span></h2>
+        </div>
+        <div class="card-body-custom">
+          <div class="table-toolbar">
+            <div class="search-wrapper">
+              <i class="bi bi-search"></i>
+              <input type="text" class="form-control-custom" id="searchInput" placeholder="Search by ID, name, or email…" oninput="filterStudents()">
+            </div>
+            <select class="form-select-custom filter-select" id="facultyFilter" onchange="filterStudents()">
+              <option value="">All Faculties</option>
+              <option value="Computing">Computing</option>
+              <option value="Business">Business</option>
+              <option value="Engineering">Engineering</option>
+              <option value="Science">Science</option>
+              <option value="Humanities">Humanities</option>
+            </select>
+            <select class="form-select-custom filter-select" id="statusFilter" onchange="filterStudents()">
+              <option value="">All Statuses</option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+              <option value="Suspended">Suspended</option>
+            </select>
+          </div>
+          <div class="table-container">
+            <table class="students-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Student ID</th>
+                  <th>Name</th>
+                  <th>Faculty</th>
+                  <th>Year</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="studentsTableBody">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <script>
+    const API_URL = 'http://localhost:8080/api/students';
+    const EXTRAS_KEY = 'studentDisplayExtras';
+
+    let allStudents = [];
+    let filteredStudents = [];
+    let usingFallback = false;
+
+    const FACULTY_CLASS = {
+      'Computing': 'faculty-computing',
+      'Business': 'faculty-business',
+      'Engineering': 'faculty-engineering',
+      'Science': 'faculty-science',
+      'Humanities': 'faculty-humanities'
+    };
+
+    const STATUS_CLASS = {
+      'Active': 'status-active',
+      'Inactive': 'status-inactive',
+      'Suspended': 'status-suspended'
+    };
+
+    const AVATAR_COLORS = ['#1E3A5F', '#2ECC71', '#F5A623', '#3B82F6', '#7C3AED', '#DB2777'];
+    const DEFAULT_YEARS = ['Year 1', 'Year 2', 'Year 3', 'Year 4'];
+
+    /* ── Display extras (year / phone) persisted locally ── */
+    function getExtras() {
+      try { return JSON.parse(localStorage.getItem(EXTRAS_KEY)) || {}; }
+      catch { return {}; }
+    }
+
+    function saveExtra(studentId, year, phone) {
+      const extras = getExtras();
+      extras[studentId] = { year, phone };
+      localStorage.setItem(EXTRAS_KEY, JSON.stringify(extras));
+    }
+
+    function enrichStudent(student, index) {
+      const extras = getExtras();
+      const extra = extras[student.studentId];
+      return {
+        ...student,
+        year: extra?.year || student.year || DEFAULT_YEARS[index % 4],
+        phone: extra?.phone || student.phone || '—',
+        status: student.status || 'Active'
+      };
+    }
+
+    function initials(name) {
+      return name.trim().split(/\s+/).map(p => p[0]).slice(0, 2).join('').toUpperCase();
+    }
+
+    function avatarColor(name) {
+      let hash = 0;
+      for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+      return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+    }
+
+    /* ── Toast ── */
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast-msg ${type}`;
+      const icon = type === 'success' ? 'bi-check-circle-fill' : 'bi-x-circle-fill';
+      toast.innerHTML = `<i class="bi ${icon}"></i><span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.add('toast-out');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    /* ── Skeleton loader ── */
+    function showSkeleton() {
+      const tbody = document.getElementById('studentsTableBody');
+      let rows = '';
+      for (let i = 0; i < 5; i++) {
+        rows += `<tr class="skeleton-row">
+          <td><div class="skeleton w-30"></div></td>
+          <td><div class="skeleton w-50"></div></td>
+          <td><div class="skeleton w-70"></div></td>
+          <td><div class="skeleton w-40"></div></td>
+          <td><div class="skeleton w-30"></div></td>
+          <td><div class="skeleton w-70"></div></td>
+          <td><div class="skeleton w-40"></div></td>
+          <td><div class="skeleton w-30"></div></td>
+        </tr>`;
+      }
+      tbody.innerHTML = rows;
+    }
+
+    /* ── Count-up animation ── */
+    function animateValue(el, end, suffix = '') {
+      const duration = 600;
+      const start = 0;
+      const startTime = performance.now();
+      const isNumeric = typeof end === 'number';
+
+      function tick(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        if (isNumeric) {
+          el.textContent = Math.round(start + (end - start) * eased) + suffix;
+        } else {
+          el.textContent = progress >= 1 ? end : '—';
+        }
+        if (progress < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    /* ── Stats ── */
+    function updateStats() {
+      const students = allStudents;
+      const total = students.length;
+      const faculties = new Set(students.map(s => s.faculty)).size;
+      const activeCount = students.filter(s => s.status === 'Active').length;
+
+      const yearCounts = {};
+      students.forEach(s => {
+        const y = s.year || 'Year 1';
+        yearCounts[y] = (yearCounts[y] || 0) + 1;
+      });
+      let commonYear = 'Year 1';
+      let maxCount = 0;
+      Object.entries(yearCounts).forEach(([yr, count]) => {
+        if (count > maxCount) { maxCount = count; commonYear = yr; }
+      });
+      if (total === 0) commonYear = '—';
+
+      animateValue(document.getElementById('statTotalStudents'), total);
+      animateValue(document.getElementById('statFaculties'), faculties);
+      animateValue(document.getElementById('statActiveStudents'), activeCount);
+      animateValue(document.getElementById('statYear'), commonYear);
+    }
+
+    /* ── Render table ── */
+    function renderTable(students) {
+      const tbody = document.getElementById('studentsTableBody');
+      const badge = document.getElementById('studentCountBadge');
+      badge.textContent = allStudents.length;
+
+      if (!students.length) {
+        tbody.innerHTML = `<tr><td colspan="8">
+          <div class="empty-state">
+            <i class="bi bi-person-x"></i>
+            <h3>No students found.</h3>
+            <p>Try adjusting your search or add a new student above.</p>
+          </div>
+        </td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = students.map((s, i) => {
+        const chipClass = FACULTY_CLASS[s.faculty] || 'faculty-default';
+        const statusClass = STATUS_CLASS[s.status] || 'status-active';
+        const color = avatarColor(s.fullName);
+        return `<tr>
+          <td style="color:var(--text-secondary);font-weight:500;">${i + 1}</td>
+          <td><strong>${esc(s.studentId)}</strong></td>
+          <td>
+            <div class="student-name-cell">
+              <span class="avatar-circle" style="background:${color};">${esc(initials(s.fullName))}</span>
+              <span>${esc(s.fullName)}</span>
+            </div>
+          </td>
+          <td><span class="faculty-chip ${chipClass}">${esc(s.faculty)}</span></td>
+          <td>${esc(s.year || '—')}</td>
+          <td>${esc(s.email)}</td>
+          <td>${esc(s.phone || '—')}</td>
+          <td><span class="status-pill ${statusClass}">${esc(s.status || 'Active')}</span></td>
+        </tr>`;
+      }).join('');
+    }
+
+    function esc(str) {
+      const d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
+
+    /* ── Filter ── */
+    function filterStudents() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      const faculty = document.getElementById('facultyFilter').value;
+      const status = document.getElementById('statusFilter').value;
+
+      filteredStudents = allStudents.filter(s => {
+        const matchFaculty = !faculty || s.faculty === faculty;
+        const matchStatus = !status || s.status === status;
+        const matchSearch = !query ||
+          s.studentId.toLowerCase().includes(query) ||
+          s.fullName.toLowerCase().includes(query) ||
+          (s.email && s.email.toLowerCase().includes(query));
+        return matchFaculty && matchStatus && matchSearch;
+      });
+
+      renderTable(filteredStudents);
+    }
+
+    /* ── Load students ── */
+    async function loadStudents() {
+      showSkeleton();
+      try {
+        const res = await fetch(API_URL);
+        if (!res.ok) throw new Error('API error');
+        const data = await res.json();
+
+        if (!data || data.length === 0) {
+          usingFallback = true;
+          allStudents = SAMPLE_STUDENTS.map(s => ({ ...s }));
+        } else {
+          usingFallback = false;
+          allStudents = data.map((s, i) => enrichStudent(s, i));
+        }
+      } catch {
+        usingFallback = true;
+        allStudents = SAMPLE_STUDENTS.map(s => ({ ...s }));
+        showToast('Could not reach API — showing sample data.', 'error');
+      }
+
+      filteredStudents = [...allStudents];
+      renderTable(filteredStudents);
+      updateStats();
+    }
+
+    /* ── Validation ── */
+    function setFieldError(fieldId, errorId, message) {
+      const field = document.getElementById(fieldId);
+      const error = document.getElementById(errorId);
+      if (message) {
+        field.classList.add('is-invalid');
+        error.querySelector('span').textContent = message;
+        error.classList.add('visible');
+      } else {
+        field.classList.remove('is-invalid');
+        error.classList.remove('visible');
+      }
+    }
+
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function validateForm() {
+      let valid = true;
+      const studentId = document.getElementById('studentId').value.trim();
+      const fullName = document.getElementById('fullName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const faculty = document.getElementById('faculty').value;
+
+      setFieldError('studentId', 'errorStudentId', !studentId ? 'Student ID is required.' : '');
+      if (!studentId) valid = false;
+
+      setFieldError('fullName', 'errorFullName', !fullName ? 'Full name is required.' : '');
+      if (!fullName) valid = false;
+
+      let emailError = '';
+      if (!email) emailError = 'Email address is required.';
+      else if (!isValidEmail(email)) emailError = 'Enter a valid email address.';
+      setFieldError('email', 'errorEmail', emailError);
+      if (emailError) valid = false;
+
+      setFieldError('faculty', 'errorFaculty', !faculty ? 'Please select a faculty.' : '');
+      if (!faculty) valid = false;
+
+      return valid;
+    }
+
+    /* ── Add student ── */
+    async function addStudent(e) {
+      e.preventDefault();
+      if (!validateForm()) return;
+
+      const studentId = document.getElementById('studentId').value.trim();
+      const fullName = document.getElementById('fullName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const faculty = document.getElementById('faculty').value;
+      const year = document.getElementById('year').value;
+      const phone = document.getElementById('phone').value.trim() || '—';
+
+      const payload = { studentId, fullName, email, faculty };
+      const saveBtn = document.getElementById('saveBtn');
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Saving…';
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error('Save failed');
+
+        const saved = await res.json();
+        saveExtra(studentId, year, phone);
+
+        const newStudent = enrichStudent(saved, allStudents.length);
+        newStudent.year = year;
+        newStudent.phone = phone;
+        newStudent.status = 'Active';
+
+        allStudents.unshift(newStudent);
+        usingFallback = false;
+        filterStudents();
+        updateStats();
+        clearForm();
+        showToast(`"${fullName}" added successfully.`);
+      } catch {
+        const localStudent = {
+          id: Date.now(),
+          studentId, fullName, email, faculty,
+          year, phone, status: 'Active'
+        };
+        saveExtra(studentId, year, phone);
+        allStudents.unshift(localStudent);
+        filterStudents();
+        updateStats();
+        clearForm();
+        showToast('Student saved locally — API unavailable.', 'error');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="bi bi-check-lg"></i> Save Student';
+      }
+    }
+
+    /* ── Clear form ── */
+    function clearForm() {
+      document.getElementById('addStudentForm').reset();
+      ['studentId', 'fullName', 'email', 'faculty'].forEach(id => {
+        document.getElementById(id).classList.remove('is-invalid');
+      });
+      document.querySelectorAll('.field-error').forEach(el => el.classList.remove('visible'));
+    }
+
+    /* ── Sidebar toggle ── */
+    function initSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      const toggle = document.getElementById('mobileToggle');
+
+      toggle.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('open');
+      });
+
+      overlay.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
+      });
+    }
+
+    /* ── Init ── */
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('addStudentForm').addEventListener('submit', addStudent);
+      initSidebar();
+      loadStudents();
+    });
+  </script>
+</body>
+</html>
