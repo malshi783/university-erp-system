@@ -1,6 +1,5 @@
 package com.university.erp.repository;
 
-import com.university.erp.model.Attendance;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
